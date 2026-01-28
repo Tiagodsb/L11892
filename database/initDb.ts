@@ -16,8 +16,8 @@ export default async function InitDb(db: SQLiteDatabase) {
         const result = await db.getFirstAsync<{ count: number }>(`SELECT COUNT(*) as count FROM dispositivos`);
 
         if (result?.count && result.count > 0) {
-        console.log('Banco já populado, pulando insert');
-        return;
+            console.log('Banco já populado, pulando insert');
+            return;
         }
 
         console.log('Populando banco de dados...');
@@ -35,6 +35,5 @@ export default async function InitDb(db: SQLiteDatabase) {
         console.log('Banco populado com sucesso 🚀');
     } catch (error) {
         console.error("erro, não foi possível inicializar o banco de dados:", error);   
-        
     }
 }
