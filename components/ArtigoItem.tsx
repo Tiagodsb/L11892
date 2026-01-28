@@ -1,5 +1,5 @@
 import { Dispositivo } from "@/database/types";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef } from "react";
 import { Animated, Keyboard, Pressable, StyleSheet, Text } from "react-native";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
   busca: string;
   isSelected: boolean;
   algumSelecionado: boolean;
-  onPress: (id: number, x: number, y: number) => void; // envia id + coordenadas para menu
+  onPress: (id: number, x: number, y: number) => void;
 };
 
 function ArtigoItem({
@@ -17,12 +17,16 @@ function ArtigoItem({
   algumSelecionado,
   onPress,
 }: Props) {
+  // Validação segura do estilo
+  const getEstiloSeguro = (estilo: string): keyof typeof styles => {
+    const estilosValidos = ["normal", "titulo", "subtitulo", "ementa"];
+    return estilosValidos.includes(estilo) 
+      ? estilo as keyof typeof styles 
+      : "normal";
+  };
 
-  const estilo = item.estilo as keyof typeof styles;
+  const estilo = getEstiloSeguro(item.estilo);
   const opacity = useRef(new Animated.Value(1)).current;
-
-  // guarda layout do texto
-  const [textLayout, setTextLayout] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
 
   useEffect(() => {
     Animated.timing(opacity, {
@@ -35,7 +39,10 @@ function ArtigoItem({
   const textoHighlight = useMemo(() => {
     if (!busca) return <Text>{item.texto}</Text>;
 
-    const partes = item.texto.split(new RegExp(`(${busca})`, "i"));
+    // Escapa caracteres especiais para regex seguro
+    const termoEscapado = busca.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${termoEscapado})`, "i");
+    const partes = item.texto.split(regex);
 
     return partes.map((parte, index) => {
       const isMatch = parte.toLowerCase() === busca.toLowerCase();
@@ -50,20 +57,13 @@ function ArtigoItem({
   return (
     <Pressable
       onPress={event => {
-        // pega posição absoluta do Pressable
         const { pageX: px, pageY: py } = event.nativeEvent;
-
-        // envia para abrir menu na base do texto
         onPress(item.id, px, py); 
         Keyboard.dismiss();
       }}
     >
       <Animated.Text
         style={[styles[estilo], { opacity }]}
-        onLayout={e => {
-          const { width, height } = e.nativeEvent.layout;
-          setTextLayout({ width, height }); // guarda altura real do texto
-        }}
       >
         {textoHighlight}
       </Animated.Text>
