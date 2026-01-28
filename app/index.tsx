@@ -1,4 +1,5 @@
 import { Dispositivo } from "@/database/types";
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
@@ -39,8 +40,19 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.busca} value={busca} onChangeText={setBusca} placeholder="Faça uma busca na lei"/>
-      <ScrollView>
+      <View style={styles.buscaContainer}>
+        <TextInput 
+          style={styles.busca} 
+          value={busca} 
+          onChangeText={setBusca} 
+          placeholder="Faça uma busca na lei"/>
+        <Pressable 
+          style={styles.buscaBtn} 
+          onPress={() => { setBusca("");}}>
+          <Ionicons name="close" size={25} color="gray"/>
+        </Pressable>
+      </View>
+      <ScrollView style={styles.scroll}>
         {buscarDispositivos.length > 0 ? (buscarDispositivos.map(d => {
 
           const estilo = d.estilo as keyof typeof styles;
@@ -98,10 +110,20 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through'
   },
   busca: {
+    fontSize: 16,
+    flex: 1
+  }, 
+  buscaContainer: {
+    flexDirection: "row",
+    alignItems:"center",
+    justifyContent:"space-between",
     borderWidth: 1,
     borderColor: "gray",
-    width: "100%",
-    marginBottom: 15,
     borderRadius: 6
+  },
+  buscaBtn: {
+  },
+  scroll: {
+    marginTop: 15,
   }
 })
