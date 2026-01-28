@@ -1,6 +1,6 @@
 import { Dispositivo } from "@/database/types";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Pressable, StyleSheet, Text } from "react-native";
+import { Animated, Keyboard, Pressable, StyleSheet, Text } from "react-native";
 
 type Props = {
   item: Dispositivo;
@@ -55,6 +55,7 @@ function ArtigoItem({
 
         // envia para abrir menu na base do texto
         onPress(item.id, px, py); 
+        Keyboard.dismiss();
       }}
     >
       <Animated.Text

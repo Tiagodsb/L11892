@@ -59,11 +59,14 @@ export default function Index() {
           style={styles.busca}
           value={busca}
           placeholder="Faça uma busca na lei"
-          onFocus={() => limparSelecao()}
+          onFocus={limparSelecao}
           onChangeText={text => { setBusca(text); setSelecionadoId(null); }}
         />
-        <Pressable onPress={() => { setBusca(""); setSelecionadoId(null); }}>
-          <Ionicons name="close" size={25} color="gray" />
+        <Pressable onPress={() => { 
+              setBusca(""); 
+              setSelecionadoId(null); 
+            }}>
+            <Ionicons name="close" size={25} color="gray" />
         </Pressable>
       </View>
 
